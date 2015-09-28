@@ -1,0 +1,33 @@
+# Configuration file for running the Ekster XMPP IoT discovery
+# component in a docker-compose compatible environment.
+#
+# Change the TODO items below so this configuration file reflect
+# your environment.
+#
+ekster:
+  image: ekster
+  links:
+   - backend
+  environment:
+   # Configure the environment for your Ekster component
+   #
+   # TODO: The JID of your Ekster component
+   #
+   - XMPP_JID=ekster
+   #
+   # TODO: The password for your Ekster component
+   #
+   - XMPP_PASSWD=secret
+   #
+   # TODO: The address of the XMPP server Ekster should connect to.
+   #
+   - XMPP_PORT_5347_TCP_ADDR=xmpp.org
+   #
+   # TODO: The port external components should connect to on your XMPP server.
+   #
+   - XMPP_PORT_5347_TCP_PORT=5347
+   #
+   - BACKEND_TYPE=mongoose
+backend:
+  image: mongo
+

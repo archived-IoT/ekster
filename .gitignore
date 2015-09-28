@@ -1,0 +1,6 @@
+node_modules
+.env
+data
+rancher-compose.yml
+docker-compose.yml
+

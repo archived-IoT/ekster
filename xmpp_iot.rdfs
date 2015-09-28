@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="rdfs-xhtml.xsl"?>
+
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+ <rdf:Description rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs">
+ <dc:title>XMPP-IoT: an RDF vocabulary</dc:title>
+ <dc:description>A vocabulary for representing things in XMPP.
+     See http://www.xyz.com/ for more details.</dc:description>
+ <dc:date></dc:date>
+ <rdfs:label>xmpp-iot</rdfs:label>
+
+ <rdfs:comment>
+     Release 0 - inital release
+ </rdfs:comment>
+
+</rdf:Description>
+
+<rdfs:Class rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#Thing">
+ <rdfs:label>Thing</rdfs:label>
+ <rdfs:comment>Anything that can be registered into a XMPP IoT registry, i.e. physical things, scripts,
+     entities that behave on behalf of a thing, ...
+</rdfs:comment>
+</rdfs:Class>
+
+<rdf:Property rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#jid">
+ <rdfs:domain rdf:resource="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#Thing" />
+ <rdfs:label>jid</rdfs:label>
+ <rdfs:comment>The XMPP JID of a Thing.</rdfs:comment>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#owner">
+ <rdfs:domain rdf:resource="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#Thing" />
+ <rdfs:label>owner</rdfs:label>
+ <rdfs:comment>The JID of the owner of a Thing.</rdfs:comment>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#nodeId">
+ <rdfs:domain rdf:resource="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#Thing" />
+ <rdfs:label>nodeId</rdfs:label>
+ <rdfs:comment>An ID uniquely identifying a node within its corresponding context. If a globally unique ID is desired, an architecture should be used using a universally accepted ID scheme.</rdfs:comment>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#sourceId">
+ <rdfs:domain rdf:resource="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#Thing" />
+ <rdfs:label>sourceId</rdfs:label>
+ <rdfs:comment>An ID identifying the data source controlling the Thing.</rdfs:comment>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#cacheType">
+ <rdfs:domain rdf:resource="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#Thing" />
+ <rdfs:label>cacheType</rdfs:label>
+ <rdfs:comment>An ID to narrow down the search to a specific kind of node.</rdfs:comment>
+</rdf:Property>
+
+<rdf:Property rdf:about="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#selfOwned">
+ <rdfs:domain rdf:resource="http://gitlab.servicelab.org/iot-lab/registry/raw/master/xmpp/registry/xmpp_iot.rdfs#Thing" />
+ <rdfs:label>selfOwned</rdfs:label>
+ <rdfs:comment>Boolean indicating if a Thing is self owned and cannot be claimed.</rdfs:comment>
+</rdf:Property>
+
+</rdf:RDF>
