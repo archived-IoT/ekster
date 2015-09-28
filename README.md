@@ -66,8 +66,8 @@ Usage: ekster.coffee [options]
 
   Examples:
 
-    $ registrar --help
-    $ registrar --jid registry.yourcompany.com --password secret --host xmpp.yourcompany.com --backend mongoose --backendHost localhost --backendPort 27017 --backendOptions '{ "user": "mongouser", "pass": "mongopass", "db": "mongodb" }'
+    $ ekster --help
+    $ ekster --jid registry.yourcompany.com --password secret --host xmpp.yourcompany.com --backend mongoose --backendHost localhost --backendPort 27017 --backendOptions '{ "user": "mongouser", "pass": "mongopass", "db": "mongodb" }'
 ```
 
 ### Install and run on Deis or Heroku
