@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Ekster by TNO-IoT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Ekster</h1>
+      <h2 class="project-tagline">XMPP Internet of Things discovery component</h2>
+      <a href="https://github.com/TNO-IoT/ekster" class="btn">View on GitHub</a>
+      <a href="https://github.com/TNO-IoT/ekster/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/TNO-IoT/ekster/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <h1>
+<a id="ekster-xmpp-iot-registry-component" class="anchor" href="#ekster-xmpp-iot-registry-component" aria-hidden="true"><span class="octicon octicon-link"></span></a>Ekster: XMPP IoT Registry component</h1>
+
+<p>Ekster, the <a href="http://www.xmpp.org">XMPP</a> <a href="http://xmpp.org/extensions/xep-0347.html">IoT Registry</a>, is an external <a href="http://xmpp.org/extensions/xep-0114.html">XMPP component</a> that can be used to register, claim and discover XMPP IoT devices.</p>
+
+<p>Ekster is the Dutch word for <a href="https://en.wikipedia.org/wiki/Magpie">Magpie</a>. In the story <em>A basket of flowers</em> by Lilian Gask (1910) a Magpie steals a golden ring. Our Ekster component <em>steals</em> all of our shiny IoT gadgets and puts it in its nest, the IoT Registry.</p>
+
+<p>A good start to learn more about Ekster is to read the <a href="http://xmpp.org/extensions/xep-0347.html">XMPP IoT discovery extension: XEP-0347</a>. Ekster aims to implement this XEP.</p>
+
+<p>For more information about XMPP and IoT you can checkout <a href="http://www.xmpp-iot.org">this website</a>.</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Ekster is available under a <strong>MIT License</strong> which means that you can basically do anything you want with this code as long as you provide attribution back to us and don’t hold us liable.</p>
+
+<h2>
+<a id="roadmap" class="anchor" href="#roadmap" aria-hidden="true"><span class="octicon octicon-link"></span></a>Roadmap</h2>
+
+<p>Ekster is still in development. It is not used in production by us. We believe we've implemented most of of XEP-0347. If you find any bugs or misinterpretations of the XEP please let us know by creating a new issue.</p>
+
+<p>Currently our roadmap for Ekster is:</p>
+
+<ul>
+<li>Create a more persistent solution for storing data when running Ekster on Docker</li>
+<li>Further testing and improving Ekster</li>
+<li>Validate the current XMPP IoT discovery extension.</li>
+</ul>
+
+<h2>
+<a id="running-ekster" class="anchor" href="#running-ekster" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running Ekster</h2>
+
+<p>There are various ways you can run the Ekster component. Our personal favorite is running the component with <a href="https://docs.docker.com/compose/">docker-compose</a>. But you can run Ekster from the command line or as an Heroku application as well.</p>
+
+<h3>
+<a id="install-and-run-on-docker" class="anchor" href="#install-and-run-on-docker" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install and run on Docker</h3>
+
+<p>The preferred way to run Ekster is using <code>docker-compose</code>. A <a href="docker-compose-template.yml">configuration template</a> is available. Follow these
+steps to run Ekster on a Docker host:</p>
+
+<ul>
+<li>First you need to add the Ekster component credentials to your XMPP server. For example on <a href="http://prosody.im/doc/components">Prosody</a> or <a href="https://www.ejabberd.im/node/5134">ejabberd</a>.</li>
+<li>Copy the template: <code>cp docker-compose-template.yml docker-compose.yml</code>
+</li>
+<li>Edit the <code>docker-compose.yml</code>, change the <code>TODO</code> items to the target environment.</li>
+<li>Get Ekster up and running using the command <code>docker-compose up</code>.</li>
+</ul>
+
+<p>Please note that the database that is setup with Ekster currently does not save its data to a datastore. It is kept locally on the mongodb docker container. When you remove that container the data will also be gone.</p>
+
+<h3>
+<a id="install-and-run-from-the-commandline" class="anchor" href="#install-and-run-from-the-commandline" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install and run from the commandline</h3>
+
+<ul>
+<li>Clone the project from git: <code>git clone git@github.com:TNO-IoT/ekster.git</code>
+</li>
+<li>Go into the folder Ekster was cloned into: <code>cd ekster</code>
+</li>
+<li>Install <a href="http://nodejs.org">nodejs</a>
+</li>
+<li>Install coffeescript: <code>npm install -g coffee-script</code>
+</li>
+<li>Start Ekster using the commandline: <code>src/ekster.coffee</code>
+</li>
+</ul>
+
+<pre><code>Usage: ekster.coffee [options]
+
+  Options:
+
+    -h, --help                       output usage information
+    -V, --version                    output the version number
+    -j, --jid &lt;jid&gt;                  jid for the registry
+    -P, --password &lt;password&gt;        password for the component
+    -H, --host &lt;hostname&gt;            hostname of the XMPP server this component connects to
+    -R, --no-reconnect               disable reconnecting to the XMPP server when the connection is lost
+    -p, --port [port]                the port to connect to [5347]
+    -b, --backend [backend]          the backend to connect to [mongoose]
+    -B, --backendHost [backendHost]  the host of the backend [localhost]
+    -s, --backendPort [backendPort]  the port where the backend is listening [27017]
+    --backendOptions []              the configuration options for the backend []
+    -v, --verbose                    verbose logging
+
+  Examples:
+
+    $ ekster --help
+    $ ekster --jid registry.yourcompany.com --password secret --host xmpp.yourcompany.com --backend mongoose --backendHost localhost --backendPort 27017 --backendOptions '{ "user": "mongouser", "pass": "mongopass", "db": "mongodb" }'
+</code></pre>
+
+<h3>
+<a id="install-and-run-on-deis-or-heroku" class="anchor" href="#install-and-run-on-deis-or-heroku" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install and run on Deis or Heroku</h3>
+
+<ul>
+<li>
+<p>Create a configuration file <code>.env</code>:</p>
+
+<pre><code>XMPP_JID=&lt;your component jid&gt;
+XMPP_PASSWD=&lt;your component password&gt;
+XMPP_HOST=&lt;your xmpp server host&gt;
+XMPP_PORT=&lt;your xmpp server's component port, ie 5347&gt;
+BACKEND_TYPE=mongoose
+BACKEND_OPTIONS=\{\"user\":\"iotregistry\",\"pass\":\"your password\",\"db\":\"registry\"\}
+BACKEND_HOST=&lt;your backend server's hostname&gt;
+BACKEND_PORT=&lt;your backend server port&gt;
+</code></pre>
+</li>
+<li>Test your configuration locally with <a href="http://blog.daviddollar.org/2011/05/06/introducing-foreman.html">foreman</a>: <code>foreman start</code>
+</li>
+<li>Deploy to the PaaS of choice.</li>
+</ul>
+
+<h2>
+<a id="development-instructions" class="anchor" href="#development-instructions" aria-hidden="true"><span class="octicon octicon-link"></span></a>Development instructions</h2>
+
+<p>The component is build in <a href="http://coffeescript.org">coffeescript</a> and needs to have coffeescript installed to run. Coffeescript compiles to javascript hence to be able to run coffeescript you need to have <a href="http://nodejs.org">nodejs</a> installed on your system.</p>
+
+<p>To install a development environment for Ekster please use the instructions below:</p>
+
+<ul>
+<li>Install <a href="http://nodejs.org">nodejs</a>
+</li>
+<li>Install coffeescript via the node package manager: <code>npm install coffee-script -g</code>
+</li>
+<li>Install the grunt build environment: <code>npm install grunt-cli -g</code>
+</li>
+<li>Install the project dependencies: <code>npm install --production</code> (for development you should leave out the <code>--production</code>)</li>
+</ul>
+
+<p>There is a <a href="Gruntfile">Gruntfile</a> with the following tasks:</p>
+
+<ul>
+<li>
+<code>default</code>: watches the code for changes and, on change, runs the linter and test cases.</li>
+<li>
+<code>grunt exec:dev</code>: runs Ekster in development mode. For this you will change the Gruntfile according to your environment.</li>
+<li>
+<code>grunt exec:production</code>: runs Ekster in production mode: this will get you configuration from environment variables.</li>
+</ul>
+
+<p>You can find the source code in <code>./src</code>. Test scripts go into <code>./test</code>. Currently the <a href="https://www.npmjs.org/package/nodeunit">nodeunit</a> test framework is used. Details on how to use the <a href="http://coffeescriptcookbook.com/chapters/testing/testing_with_nodeunit">nodeunit test framework with coffeescript is detailed here</a>.</p>
+
+<p>Before adding sources to the git repository they should pass the <code>coffeelint</code> and <code>nodeunit</code> checks. You can run the checks manually by issuing <code>grunt coffeelint</code> and <code>grunt nodeunit</code>. Or you can run the checks automatically every time you save a file by issuing <code>grunt watch</code> or <code>grunt</code>.</p>
+
+<h3>
+<a id="source-code" class="anchor" href="#source-code" aria-hidden="true"><span class="octicon octicon-link"></span></a>Source code</h3>
+
+<p>Below you find a list of source files and a short description about what function they provide:</p>
+
+<ul>
+<li>
+<a href="src/ekster.coffee"><code>ekster.coffee</code></a> - Entry script that creates the connections to the database and XMPP server and starts XMPP stanza processor.</li>
+<li>
+<a href="src/backend.coffee"><code>backend.coffee</code></a> - Interface that backend connectors should implement.</li>
+<li>
+<a href="src/logger.coffee"><code>logger.coffee</code></a> - Wrapper to the logger module.</li>
+<li>
+<a href="src/mongoose-backend.coffee"><code>mongoose-backend.coffee</code></a> - Backend implementation using <a href="http://mongoosejs.com">mongoose</a> models to write to a mongodb. Currently the default backend for Ekster.</li>
+<li>
+<a href="src/octoblu-backend.coffee"><code>octoblu-backend.coffee</code></a> - Backend implementation that uses <a href="https://www.octoblu.com">octoblu</a> as a backend service. Octoblu rate-limits requests and this may cause unexpected behavior with the registry. Might be outdated...</li>
+<li>
+<a href="src/presence-handler.coffee"><code>presence-handler.coffee</code></a> - Handles incoming presence message and friendship relations of the registry.</li>
+<li>
+<a href="src/processor.coffee"><code>processor.coffee</code></a> - Handles incoming message for the registry. This is where the XMPP IoT discovery protocol is implemented.</li>
+<li>
+<a href="src/property.coffee"><code>property.coffee</code></a> - A name/value pair that a Thing uses to register META information.</li>
+<li>
+<a href="src/thing.coffee"><code>thing.coffee</code></a> - The model of a Thing used by the processor.</li>
+</ul>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/TNO-IoT/ekster">Ekster</a> is maintained by <a href="https://github.com/TNO-IoT">TNO-IoT</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
+  </body>
+</html>
