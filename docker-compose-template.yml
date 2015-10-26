@@ -5,7 +5,7 @@
 # your environment.
 #
 ekster:
-  image: ekster
+  image: tnoiot/ekster
   links:
    - backend
   environment:
