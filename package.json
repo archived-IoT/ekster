@@ -7,14 +7,11 @@
   "dependencies": {
     "bunyan": "^1.2.1",
     "coffee-script": "^1.9.0",
-    "coffeelint": "^1.6.0",
     "commander": "^2.5.0",
-    "grunt-coffeelint": "0.0.13",
-    "grunt-exec": "^0.4.6",
     "lodash": "^3.10.0",
     "mongoose": "^4.0.2",
     "node-cache": "^1.1.0",
-    "node-stringprep": "^0.6.2",
+    "node-stringprep": "^0.7.3",
     "node-xmpp-component": "^1.0.0-alpha1",
     "node-xmpp-core": "^1.0.0-alpha10",
     "q": "^1.0.1",
@@ -23,13 +20,19 @@
   "devDependencies": {
     "grunt": "^0.4.5",
     "grunt-contrib-coffee": "^0.12.0",
+    "grunt-coffeelint": "0.0.13",
+    "grunt-exec": "^0.4.6",
+    "coffeelint": "^1.6.0",
     "grunt-contrib-jshint": "^0.10.0",
     "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-watch": "~0.4.0",
     "skynet": "^1.8.1",
-    "mockgoose": "git@github.com:morficus/Mockgoose.git#bb6bd61609871a61e760c1fdc871d7ed7d89b6a9"
+    "mockgoose": "^5.3.2"
   },
   "engines": {
     "node": "~0.12.1"
+  },
+  "scripts": {
+    "start": "./start.sh"
   }
 }
