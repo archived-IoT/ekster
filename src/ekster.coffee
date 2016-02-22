@@ -74,17 +74,8 @@ component.on 'online', () ->
     log.info 'IoT Registry component came online.'
 
     # Keep the connection going by sending a keep alive
-    # every 5 minutes (5 minutes * 60 seconds * 1000 milliseconds)
-    ping = new ltx.Element 'iq',
-            to: program.jid
-            type: 'get'
-    ping.c 'ping', { 'xmlns': 'urn:xmpp:ping' }
-
-    setInterval () ->
-        log.trace 'Sending keep-alive to the server'
-        ping.attrs.id = shortId.generate()
-        component.send ping
-    , 5*60*1000
+    component.connection.socket.setTimeout(0)
+    component.connection.socket.setKeepAlive(true, 10000)
 
 component.on 'reconnect', () ->
     log.info 'The connection to the XMPP server is lost but Ekster tries to reconnect...'
