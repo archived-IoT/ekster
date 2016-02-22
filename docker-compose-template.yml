@@ -5,7 +5,7 @@
 # your environment.
 #
 ekster:
-  image: ekster
+  image: tnoiot/ekster
   links:
    - backend
   environment:
@@ -30,4 +30,6 @@ ekster:
    - BACKEND_TYPE=mongoose
 backend:
   image: mongo
+  # If the mongo container fails to start on a docker-machine try uncommenting the line below
+  # command: mongod --smallfiles
 
