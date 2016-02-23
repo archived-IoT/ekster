@@ -15,7 +15,6 @@ Q = require 'q'
 
 class Connection extends EventEmitter
     constructor: () ->
-        @jid = 'class-under-test'
 
 class TestBackend extends Backend
     constructor: (@callback) ->
@@ -35,14 +34,14 @@ exports.PresenceHandlerTest =
             type='subscribe'/>"
 
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         connection.send = (stanza) ->
             test.notEqual stanza.attrs.id, '0', 'should generate a new id'
             test.equal stanza.name, 'presence'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'subscribe'
             test.expect 5
             test.done()
@@ -58,14 +57,14 @@ exports.PresenceHandlerTest =
             type='unsubscribe'/>"
 
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         connection.send = (stanza) ->
             test.equal stanza.name, 'presence'
             test.notEqual stanza.attrs.id, '0', 'should generate a new id'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
 
             if stanza.attrs.type isnt 'unsubscribed'
                 test.equal stanza.attrs.type, 'unsubscribe'
@@ -80,14 +79,14 @@ exports.PresenceHandlerTest =
             type='subscribed'/>"
 
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         connection.send = (stanza) ->
             test.notEqual stanza.attrs.id, '0', 'should generate a new id'
             test.equal stanza.name, 'presence'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'subscribed'
             test.expect 5
             test.done()
@@ -96,7 +95,7 @@ exports.PresenceHandlerTest =
 
     'test unfriend' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         received = 0
@@ -107,13 +106,13 @@ exports.PresenceHandlerTest =
             if stanza.attrs.type is 'unsubscribe'
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'unsubscribe'
 
             if stanza.attrs.type is 'unsubscribed'
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'unsubscribed'
 
             if received is 2
@@ -124,13 +123,13 @@ exports.PresenceHandlerTest =
 
     'test online - user is offline' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         connection.send = (stanza) ->
             test.equal stanza.name, 'presence'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'probe'
 
         onSuccess = () ->
@@ -146,7 +145,7 @@ exports.PresenceHandlerTest =
 
     'test online - user is online' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         processor.backend = new TestBackend (method, thing) ->
@@ -157,7 +156,7 @@ exports.PresenceHandlerTest =
         connection.send = (stanza) ->
             test.equal stanza.name, 'presence'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'probe'
 
         onSuccess = (jid) ->
@@ -180,7 +179,7 @@ exports.PresenceHandlerTest =
 
     'test online - user is online - no status' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         processor.backend = new TestBackend (method, thing) ->
@@ -191,7 +190,7 @@ exports.PresenceHandlerTest =
         connection.send = (stanza) ->
             test.equal stanza.name, 'presence'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'probe'
 
         onSuccess = (jid) ->
@@ -214,7 +213,7 @@ exports.PresenceHandlerTest =
 
     'test online - multiple request for same user' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         processor.backend = new TestBackend (method, thing) ->
@@ -225,7 +224,7 @@ exports.PresenceHandlerTest =
         connection.send = (stanza) ->
             test.equal stanza.name, 'presence'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'probe'
 
         count = 0
@@ -255,13 +254,13 @@ exports.PresenceHandlerTest =
 
     'test online - unavailable' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         connection.send = (stanza) ->
             test.equal stanza.name, 'presence'
             test.equal stanza.attrs.to, 'thing@clayster.com'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'probe'
 
         onSuccess = () ->
@@ -286,14 +285,14 @@ exports.PresenceHandlerTest =
             to='discovery.clayster.com'/>"
 
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         connection.send = (stanza) ->
             test.notEqual stanza.attrs.id, undefined
             test.equal stanza.name, 'iq'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.type, 'set'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'claimed'
@@ -339,7 +338,7 @@ exports.PresenceHandlerTest =
             to='discovery.clayster.com'/>"
 
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
 
         processor.backend = new TestBackend (method, thing) ->
@@ -360,7 +359,7 @@ exports.PresenceHandlerTest =
 
     'test unfriend if possible - it is possible' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
         received = 0
 
@@ -370,13 +369,13 @@ exports.PresenceHandlerTest =
             if stanza.attrs.type is 'unsubscribe'
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'unsubscribe'
 
             if stanza.attrs.type is 'unsubscribed'
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'unsubscribed'
 
             if received is 2
@@ -398,7 +397,7 @@ exports.PresenceHandlerTest =
 
     'test unfriend if possible - it is not possible' : (test) ->
         connection = new Connection
-        processor = new Processor(connection)
+        processor = new Processor(connection, 'discovery.clayster.com')
         handler = new PresenceHandler(processor)
         received = 0
 

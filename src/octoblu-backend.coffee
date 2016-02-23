@@ -443,7 +443,7 @@ class OctobluBackend extends Backend
         for property in thing.properties
             if _.indexOf(OctobluBackend.RESERVED_KEYS,
                 property.name) isnt -1
-                throw new Error("Illegal property: #{ property.name }")
+                    throw new Error("Illegal property: #{ property.name }")
 
             if _.contains(octoThing, property.name)
                 throw new Error("Duplicate property: #{ property.name }")

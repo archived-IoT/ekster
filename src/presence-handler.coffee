@@ -52,7 +52,7 @@ class PresenceHandler
     handleSubscribe: (from, stanza) =>
         request = new ltx.Element 'presence',
             to: from
-            from: @processor.connection.jid
+            from: @processor.jid
             id: shortId.generate()
             type: 'subscribe'
 
@@ -66,7 +66,7 @@ class PresenceHandler
     handleSubscribed: (from, stanza) =>
         response = new ltx.Element 'presence',
             to: from
-            from: @processor.connection.jid
+            from: @processor.jid
             id: shortId.generate()
             type: 'subscribed'
 
@@ -80,7 +80,7 @@ class PresenceHandler
     handleUnsubscribe: (from, stanza) =>
         request = new ltx.Element 'presence',
             to: from
-            from: @processor.connection.jid
+            from: @processor.jid
             id: shortId.generate()
             type: 'unsubscribed'
 
@@ -89,7 +89,7 @@ class PresenceHandler
 
         request = new ltx.Element 'presence',
             to: from
-            from: @processor.connection.jid
+            from: @processor.jid
             id: shortId.generate()
             type: 'unsubscribe'
 
@@ -110,7 +110,7 @@ class PresenceHandler
         # cancel the subscription ...
         cancel = new ltx.Element 'presence',
             to: jid
-            from: @processor.connection.jid
+            from: @processor.jid
             id: shortId.generate()
             type: 'unsubscribed'
 
@@ -120,7 +120,7 @@ class PresenceHandler
         # ... unsubscribe from the other parties presence
         unsubscribe = new ltx.Element 'presence',
             to: jid
-            from: @processor.connection.jid
+            from: @processor.jid
             id: shortId.generate()
             type: 'unsubscribe'
 
@@ -148,7 +148,7 @@ class PresenceHandler
     probe: (jid) =>
         probe = new ltx.Element 'presence',
             to: jid
-            from: @processor.connection.jid
+            from: @processor.jid
             id: shortId.generate()
             type: 'probe'
 

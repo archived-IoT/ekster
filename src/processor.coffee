@@ -16,7 +16,7 @@ PresenceHandler = require './presence-handler.coffee'
 Filter = require './filter.coffee'
 
 class Processor
-    constructor: (@connection, @backend, @log) ->
+    constructor: (@connection, @jid, @backend, @log) ->
         @connection.on 'stanza', @process
         @log = new Logger() if not @log
         @log.info 'The XMPP event processor is ready'
@@ -78,7 +78,7 @@ class Processor
         @log.warn error.message
         result = new ltx.Element 'iq',
             to: stanza.attrs.from
-            from: @connection.jid
+            from: @jid
             type: 'error'
             id: stanza.attrs.id
         @connection.send result
@@ -86,7 +86,7 @@ class Processor
     respondWithServiceUnavailable: (stanza) ->
         result = new ltx.Element 'iq',
             to: stanza.attrs.from
-            from: @connection.jid
+            from: @jid
             type: 'error'
             id: stanza.attrs.id
 
@@ -103,7 +103,9 @@ class Processor
         @log.trace stanza.toString()
 
         if stanza.name is 'presence'
-            @presenceHandler.handle stanza, @connection, @backend
+            # ignore error stanza's
+            if stanza.attrs.type isnt 'error'
+                @presenceHandler.handle stanza, @connection, @backend
             return
 
         if stanza.name isnt 'iq'
@@ -136,7 +138,7 @@ class Processor
             # https://xmpp.org/rfcs/rfc6120.html#stanzas-semantics-iq
             result = new ltx.Element 'iq',
                 to: stanza.attrs.from
-                from: @connection.jid
+                from: @jid
                 type: 'error'
                 id: stanza.attrs.id
 
@@ -178,7 +180,7 @@ class Processor
 
         result = new ltx.Element 'iq',
             to: stanza.attrs.from
-            from: @connection.jid
+            from: @jid
             id: stanza.attrs.id
             type: 'result'
 
@@ -190,7 +192,7 @@ class Processor
 
         result = new ltx.Element 'iq',
             to: stanza.attrs.from
-            from: @connection.jid
+            from: @jid
             id: stanza.attrs.id
 
         if request.attrs and request.attrs.xmlns is 'http://jabber.org/protocol/disco#info'
@@ -216,7 +218,7 @@ class Processor
 
         result = new ltx.Element 'iq',
             to: stanza.attrs.from
-            from: @connection.jid
+            from: @jid
             id: stanza.attrs.id
 
         offset = parseInt request.attrs.offset
@@ -321,7 +323,7 @@ class Processor
 
         result = new ltx.Element 'iq',
             to: stanza.attrs.from
-            from: @connection.jid
+            from: @jid
             id: stanza.attrs.id
 
         onSuccess = (thing) =>
@@ -361,7 +363,7 @@ class Processor
 
         result = new ltx.Element 'iq',
             to: stanza.attrs.from
-            from: @connection.jid
+            from: @jid
             type: 'result'
             id: stanza.attrs.id
 
@@ -383,7 +385,7 @@ class Processor
     notifyRemoved: (jid, thing) =>
         message = new ltx.Element 'iq',
             to: jid,
-            from: @connection.jid,
+            from: @jid,
             type: 'set',
             id: shortId.generate()
 
@@ -443,7 +445,7 @@ class Processor
             # on success first send the response...
             result = new ltx.Element 'iq',
                 to: stanza.attrs.from
-                from: @connection.jid
+                from: @jid
                 type: 'result'
                 id: stanza.attrs.id
 
@@ -455,7 +457,7 @@ class Processor
             if error.message is 'not-found'
                 result = new ltx.Element 'iq',
                     to: stanza.attrs.from
-                    from: @connection.jid
+                    from: @jid
                     id: stanza.attrs.id
                     type: 'error'
 
@@ -477,7 +479,7 @@ class Processor
         # notify the thing that it is being disowned
         message = new ltx.Element 'iq',
             to: jid,
-            from: @connection.jid,
+            from: @jid,
             type: 'set',
             id: shortId.generate()
 
@@ -517,7 +519,7 @@ class Processor
                     @log.trace 'Update successful. Thing has been disowned'
                     result = new ltx.Element 'iq',
                         to: stanza.attrs.from
-                        from: @connection.jid
+                        from: @jid
                         id: stanza.attrs.id
                         type: 'result'
 
@@ -558,7 +560,7 @@ class Processor
             if things.length is 0
                 result = new ltx.Element 'iq',
                     to: stanza.attrs.from
-                    from: @connection.jid
+                    from: @jid
                     id: stanza.attrs.id
                     type: 'error'
 
@@ -584,7 +586,7 @@ class Processor
                         # when not online the thing can not be disowned
                         result = new ltx.Element 'iq',
                             to: stanza.attrs.from
-                            from: @connection.jid
+                            from: @jid
                             id: stanza.attrs.id
                             type: 'error'
 
@@ -614,7 +616,7 @@ class Processor
         # notify the thing about its new owner
         message = new ltx.Element 'iq',
             to: jid,
-            from: @connection.jid,
+            from: @jid,
             type: 'set',
             id: shortId.generate()
 
@@ -677,7 +679,7 @@ class Processor
             # on success first send the response...
             result = new ltx.Element 'iq',
                 to: stanza.attrs.from
-                from: @connection.jid
+                from: @jid
                 type: 'result'
                 id: stanza.attrs.id
 
@@ -697,7 +699,7 @@ class Processor
             if error.message is 'claimed' or error.message is 'not-found'
                 result = new ltx.Element 'iq',
                     to: stanza.attrs.from
-                    from: @connection.jid
+                    from: @jid
                     id: stanza.attrs.id
                     type: 'result'
 
@@ -730,7 +732,7 @@ class Processor
         onSuccess = =>
             result = new ltx.Element 'iq',
                 to: stanza.attrs.from
-                from: @connection.jid
+                from: @jid
                 type: 'result'
                 id: stanza.attrs.id
             @connection.send result
@@ -739,7 +741,7 @@ class Processor
             if error.message is 'claimed'
                 result = new ltx.Element 'iq',
                     to: stanza.attrs.from
-                    from: @connection.jid
+                    from: @jid
                     id: stanza.attrs.id
                     type: 'result'
                 result.c 'claimed',

@@ -16,7 +16,6 @@ ltx = require('node-xmpp-core').ltx
 
 class Connection extends EventEmitter
     constructor: () ->
-        @jid = 'class-under-test'
 
 class TestBackend extends Backend
     constructor: (@callback) ->
@@ -54,7 +53,7 @@ exports.ProcessorTest =
 
         connection = new Connection
         backend = new TestBackend
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
 
         connection.send = (stanza) ->
             test.ok false, 'do not call this'
@@ -70,7 +69,7 @@ exports.ProcessorTest =
 
         connection = new Connection
         backend = new TestBackend
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
         test.done()
 
@@ -86,10 +85,10 @@ exports.ProcessorTest =
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.id, '1'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test respond with error when the iq message is not of type
@@ -105,10 +104,10 @@ exports.ProcessorTest =
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.id, '1'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test respond with error when the iq message has to many
@@ -127,10 +126,10 @@ exports.ProcessorTest =
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.id, '1'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test respond with service-unavailable when the iq message has an unknown
@@ -147,7 +146,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.id, '1'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 2
 
             for child in stanza.children
@@ -158,11 +157,12 @@ exports.ProcessorTest =
                     test.equal child.attrs.type, 'cancel'
                     test.equal child.children.length, 1
                     test.equal child.children[0].name, 'service-unavailable'
-                    test.equal child.children[0].attrs.xmlns, 'urn:ietf:params:xml:ns:xmpp-stanzas'
+                    test.equal child.children[0].attrs.xmlns,
+                        'urn:ietf:params:xml:ns:xmpp-stanzas'
 
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test respond to ping': (test) ->
@@ -178,11 +178,11 @@ exports.ProcessorTest =
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '1'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 0
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.6 register a thing': (test) ->
@@ -205,7 +205,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '1'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 12
             test.done()
 
@@ -226,7 +226,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.6 register a self owned thing': (test) ->
@@ -249,7 +249,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '1'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 13
             test.done()
 
@@ -271,7 +271,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.6 registering a thing fails': (test) ->
@@ -294,7 +294,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '2'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 7
             test.done()
 
@@ -304,7 +304,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error('fails in this test case')
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.6 registering a thing fails because of illegal value': (test) ->
@@ -323,11 +323,11 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '2'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 5
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.6 registering a thing fails because of unknown
@@ -347,11 +347,11 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '2'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 5
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.6 registering a thing fails because of illegal namespace': (test) ->
@@ -370,11 +370,11 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '2'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 5
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.6 registering thing that already has been claimed': (test) ->
@@ -397,7 +397,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '1'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children[0].name, 'claimed'
             test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
             test.equal stanza.children[0].attrs.jid, 'owner@clayster.com'
@@ -412,7 +412,7 @@ exports.ProcessorTest =
                 error.owner = 'owner@clayster.com'
                 throw error
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.8 register thing behind concentrator': (test) ->
@@ -438,7 +438,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'rack@clayster.com/plcs'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '3'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 11
             test.done()
 
@@ -452,7 +452,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.8 register thing behind concentrator without cacheType': (test) ->
@@ -477,7 +477,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'rack@clayster.com/plcs'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '3'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 11
             test.done()
 
@@ -491,7 +491,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.9 - example 15 and 20 - claim ownership of public thing': (test) ->
@@ -517,7 +517,7 @@ exports.ProcessorTest =
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
                     test.equal stanza.attrs.type, 'result'
                     test.equal stanza.attrs.id, '4'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.children[0].name, 'claimed'
                     test.equal stanza.children[0].attrs.xmlns,
                         'urn:xmpp:iot:discovery'
@@ -542,11 +542,11 @@ exports.ProcessorTest =
             else
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'probe'
 
                 presence =  "<presence from='thing@clayster.com/imc'
-                    to='class-under-test'
+                    to='discovery.clayster.com'
                     type='available'/>"
 
                 connection.emit 'stanza', ltx.parse(presence)
@@ -578,7 +578,7 @@ exports.ProcessorTest =
                     thing.needsNotification = undefined
                     return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.9 - example 16 and 20 - claim ownership of a private thing': (test) ->
@@ -604,7 +604,7 @@ exports.ProcessorTest =
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
                     test.equal stanza.attrs.type, 'result'
                     test.equal stanza.attrs.id, '4'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.children[0].name, 'claimed'
                     test.equal stanza.children[0].attrs.xmlns,
                         'urn:xmpp:iot:discovery'
@@ -630,11 +630,11 @@ exports.ProcessorTest =
             else
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'probe'
 
                 presence =  "<presence from='thing@clayster.com/imc'
-                    to='class-under-test'
+                    to='discovery.clayster.com'
                     type='available'/>"
 
                 connection.emit 'stanza', ltx.parse(presence)
@@ -667,7 +667,7 @@ exports.ProcessorTest =
                     thing.needsNotification = undefined
                     return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.9 - example 16 and 20 - claim ownership of a public thing (attrib)': (test) ->
@@ -693,7 +693,7 @@ exports.ProcessorTest =
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
                     test.equal stanza.attrs.type, 'result'
                     test.equal stanza.attrs.id, '4'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.children[0].name, 'claimed'
                     test.equal stanza.children[0].attrs.xmlns,
                         'urn:xmpp:iot:discovery'
@@ -719,11 +719,11 @@ exports.ProcessorTest =
             else
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'probe'
 
                 presence =  "<presence from='thing@clayster.com/imc'
-                    to='class-under-test'
+                    to='discovery.clayster.com'
                     type='available'/>"
 
                 connection.emit 'stanza', ltx.parse(presence)
@@ -757,7 +757,7 @@ exports.ProcessorTest =
                     thing.needsNotification = undefined
                     return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.9 - example 18 and 22 - claim ownership of public thing behind
@@ -782,7 +782,7 @@ exports.ProcessorTest =
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
                     test.equal stanza.attrs.type, 'result'
                     test.equal stanza.attrs.id, '4'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.children[0].name, 'claimed'
                     test.equal stanza.children[0].attrs.xmlns,
                         'urn:xmpp:iot:discovery'
@@ -814,11 +814,11 @@ exports.ProcessorTest =
             else
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.type, 'probe'
 
                 presence =  "<presence from='thing@clayster.com/imc'
-                    to='class-under-test'
+                    to='discovery.clayster.com'
                     type='available'/>"
 
                 connection.emit 'stanza', ltx.parse(presence)
@@ -852,7 +852,7 @@ exports.ProcessorTest =
                     thing.needsNotification = undefined
                     return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.9 - claim ownership of thing fails because thing was already
@@ -876,7 +876,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'owner@clayster.com/phone'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '4'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children[0].name, 'error'
             test.equal stanza.children[0].attrs.type, 'cancel'
             test.equal stanza.children[0].children[0].name, 'item-not-found'
@@ -891,7 +891,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error 'claimed'
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.9 - claim ownership of thing fails because thing was
@@ -915,7 +915,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'owner@clayster.com/phone'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '4'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children[0].name, 'error'
             test.equal stanza.children[0].attrs.type, 'cancel'
             test.equal stanza.children[0].children[0].name, 'item-not-found'
@@ -930,7 +930,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error 'not-found'
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.9 - claim ownership of thing fails because of
@@ -954,7 +954,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'owner@clayster.com/phone'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '4'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 7
             test.done()
 
@@ -964,7 +964,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error 'banana'
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.10 - example 24 - removing a thing from the registry': (test) ->
@@ -981,7 +981,7 @@ exports.ProcessorTest =
                 if stanza.attrs.type is 'result'
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
                     test.equal stanza.attrs.type, 'result'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.id, '6'
                 else
                     test.equal stanza.attrs.to, 'thing@clayster.com/imc'
@@ -1003,7 +1003,7 @@ exports.ProcessorTest =
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.type, 'probe'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
 
                 response = "<presence
                     from='thing@clayster.com/imc'
@@ -1046,7 +1046,7 @@ exports.ProcessorTest =
                 return Q.fcall ->
                     return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.10 - example 25 - removing a thing behind a concentrator
@@ -1067,7 +1067,7 @@ exports.ProcessorTest =
                 if stanza.attrs.type is 'result'
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
                     test.equal stanza.attrs.type, 'result'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.id, '6'
                 else
                     test.equal stanza.attrs.to, 'rack@clayster.com/imc'
@@ -1093,7 +1093,7 @@ exports.ProcessorTest =
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.type, 'probe'
                 test.equal stanza.attrs.to, 'rack@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
 
                 response = "<presence
                     from='rack@clayster.com/imc'
@@ -1139,7 +1139,7 @@ exports.ProcessorTest =
                 return Q.fcall ->
                     return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.10 - example 27 - removing a thing from the registry
@@ -1156,7 +1156,7 @@ exports.ProcessorTest =
             test.equal stanza.name, 'iq'
             test.equal stanza.attrs.to, 'owner@clayster.com/phone'
             test.equal stanza.attrs.type, 'error'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.id, '6'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'error'
@@ -1174,7 +1174,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error 'not-found'
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.10 - example 27 - removing a thing from the registry
@@ -1191,7 +1191,7 @@ exports.ProcessorTest =
             test.equal stanza.name, 'iq'
             test.equal stanza.attrs.to, 'owner@clayster.com/phone'
             test.equal stanza.attrs.type, 'error'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.id, '6'
             test.expect 7
             test.done()
@@ -1202,7 +1202,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.13 - example 31 and 33 - update meta data request': (test) ->
@@ -1224,7 +1224,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '8'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 12
             test.done()
 
@@ -1245,7 +1245,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.13 - example 32 and 33 - update meta data request
@@ -1269,7 +1269,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'rack@clayster.com/plcs'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '8'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 15
             test.done()
 
@@ -1293,7 +1293,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.13 - example 31 - update meta data request fails': (test) ->
@@ -1315,7 +1315,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '8'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 8
             test.done()
 
@@ -1327,7 +1327,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.13 - example 31 and 34 - update meta data request fails': (test) ->
@@ -1349,7 +1349,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '8'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'error'
             test.equal stanza.children[0].attrs.type, 'cancel'
@@ -1368,7 +1368,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error('not-found')
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.13 - example 31 and 35 - update meta data request fails
@@ -1391,7 +1391,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '8'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'disowned'
             test.equal stanza.children[0].attrs.xmlns,
@@ -1407,7 +1407,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error('disowned')
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.13 - example 36 and 38 - update meta data request by the owner': (test) ->
@@ -1429,7 +1429,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'owner@clayster.com/imc'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '8'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.expect 13
             test.done()
 
@@ -1451,7 +1451,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
 
@@ -1473,7 +1473,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'found'
             test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
@@ -1517,7 +1517,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return result
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.14 - example 42 - searching for Things [strEq & numEq]': (test) ->
@@ -1538,7 +1538,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'found'
             test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
@@ -1585,10 +1585,11 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return result
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
-    'test 3.14 - example 42 - searching for Things [strRange & strNRange & strMask & numRange & numNRange]': (test) ->
+    'test 3.14 - example 42 - searching for Things [strRange & strNRange & strMask
+    & numRange & numNRange]': (test) ->
         message = "<iq type='get'
                from='curious@clayster.com/client'
                to='discovery.clayster.com'
@@ -1608,7 +1609,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'found'
             test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
@@ -1686,7 +1687,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return result
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.14 - cannot search for KEY': (test) ->
@@ -1705,7 +1706,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'found'
             test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
@@ -1714,7 +1715,7 @@ exports.ProcessorTest =
             test.expect 9
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
      'test 3.14 - cannot search with illegal offset': (test) ->
@@ -1733,13 +1734,13 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 0
 
             test.expect 6
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
      'test 3.14 - cannot search without offset': (test) ->
@@ -1758,13 +1759,13 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 0
 
             test.expect 6
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.14 - cannot search without maxCount': (test) ->
@@ -1783,13 +1784,13 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 0
 
             test.expect 6
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
      'test 3.14 - cannot search with illegal maxCount': (test) ->
@@ -1808,13 +1809,13 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 0
 
             test.expect 6
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
 
@@ -1834,7 +1835,7 @@ exports.ProcessorTest =
             test.equal stanza.attrs.to, 'curious@clayster.com/client'
             test.equal stanza.attrs.type, 'error'
             test.equal stanza.attrs.id, '9'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.children.length, 1
             test.equal stanza.children[0].name, 'error'
             test.equal stanza.children[0].attrs.type, 'cancel'
@@ -1855,7 +1856,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 throw new Error 'feature-not-implemented'
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 4 - example 60 - determine support': (test) ->
@@ -1882,7 +1883,7 @@ exports.ProcessorTest =
             test.expect 10
             test.done()
 
-        processor = new Processor connection
+        processor = new Processor connection, 'discovery.clayster.com'
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.16 - example 43 - unregister thing': (test) ->
@@ -1897,7 +1898,7 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             test.equal stanza.name, 'iq'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.id, '10'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.children.length, 0
@@ -1911,7 +1912,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.16 - example 43 - unregister thing fails': (test) ->
@@ -1926,7 +1927,7 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             test.equal stanza.name, 'iq'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.id, '10'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.children.length, 0
@@ -1940,7 +1941,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return new Error
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.16 - example 44 - unregister thing behind a concentrator': (test) ->
@@ -1955,7 +1956,7 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             test.equal stanza.name, 'iq'
             test.equal stanza.attrs.to, 'thing@clayster.com/imc'
-            test.equal stanza.attrs.from, 'class-under-test'
+            test.equal stanza.attrs.from, 'discovery.clayster.com'
             test.equal stanza.attrs.id, '10'
             test.equal stanza.attrs.type, 'result'
             test.equal stanza.children.length, 0
@@ -1971,7 +1972,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.17 - example 46 / 48 - disowning thing fails: item not found': (test) ->
@@ -1986,7 +1987,7 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             if stanza.name is 'iq'
                 test.equal stanza.attrs.to, 'owner@clayster.com/phone'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.id, '11'
                 test.equal stanza.attrs.type, 'error'
                 test.equal stanza.children.length, 1
@@ -2008,7 +2009,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return [ ]
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.17 - example 46 / 48 - disowning thing fails: not the owner': (test) ->
@@ -2028,7 +2029,7 @@ exports.ProcessorTest =
                 # accidently returns an item that is not owned by
                 # the caller
                 test.equal stanza.attrs.to, 'owner@clayster.com/phone'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.id, '11'
                 test.equal stanza.attrs.type, 'error'
                 test.equal stanza.children.length, 0
@@ -2048,7 +2049,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return [ result ]
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.17 - example 46 / 49 - disowning thing fails: offline': (test) ->
@@ -2063,7 +2064,7 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             if stanza.name is 'iq'
                 test.equal stanza.attrs.to, 'owner@clayster.com/phone'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
                 test.equal stanza.attrs.id, '11'
                 test.equal stanza.attrs.type, 'error'
                 test.equal stanza.children.length, 1
@@ -2081,7 +2082,7 @@ exports.ProcessorTest =
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.type, 'probe'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
 
                 response = "<presence
                     from='thing@clayster.com/imc'
@@ -2099,7 +2100,7 @@ exports.ProcessorTest =
             return Q.fcall ->
                 return [ thing ]
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.17 - example 46 / 50 / 52 / 53 - disowning thing successful': (test) ->
@@ -2114,21 +2115,21 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             if stanza.name is 'iq'
                 if stanza.attrs.to is 'thing@clayster.com/imc'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.type, 'set'
                     test.equal stanza.children.length, 1
                     test.equal stanza.children[0].name, 'disowned'
                     test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
 
                     response = "<iq type='result'
-                        from='discovery.clayster.com'
+                        from='discovery.clayster.com',
                         to='discovery.clayster.com'
                         id='#{ stanza.attrs.id }'/>"
 
                     connection.emit 'stanza', ltx.parse(response)
                 else
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.id, '11'
                     test.equal stanza.attrs.type, 'result'
                     test.expect 26
@@ -2137,7 +2138,7 @@ exports.ProcessorTest =
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.type, 'probe'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
 
                 response = "<presence
                     from='thing@clayster.com/imc'
@@ -2179,7 +2180,7 @@ exports.ProcessorTest =
                 return Q.fcall ->
                     return [ thing ]
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.17 - example 46 / 50 / 52 / 53 - disowning thing successfully
@@ -2198,7 +2199,7 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             if stanza.name is 'iq'
                 if stanza.attrs.to is 'thing@clayster.com/imc'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.type, 'set'
                     test.equal stanza.children.length, 1
                     test.equal stanza.children[0].name, 'disowned'
@@ -2207,14 +2208,14 @@ exports.ProcessorTest =
                     test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
 
                     response = "<iq type='result'
-                        from='discovery.clayster.com'
+                        from='discovery.clayster.com',
                         to='discovery.clayster.com'
                         id='#{ stanza.attrs.id }'/>"
 
                     connection.emit 'stanza', ltx.parse(response)
                 else
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.id, '11'
                     test.equal stanza.attrs.type, 'result'
                     test.expect 21
@@ -2223,7 +2224,7 @@ exports.ProcessorTest =
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.type, 'probe'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
 
                 response = "<presence
                     from='thing@clayster.com/imc'
@@ -2259,7 +2260,7 @@ exports.ProcessorTest =
                 return Q.fcall ->
                     return thing
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.17 - example 46 / 50 / 52 / 53 - disowning thing fails, unexpected response': (test) ->
@@ -2274,21 +2275,21 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             if stanza.name is 'iq'
                 if stanza.attrs.to is 'thing@clayster.com/imc'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.type, 'set'
                     test.equal stanza.children.length, 1
                     test.equal stanza.children[0].name, 'disowned'
                     test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
 
                     response = "<iq type='error'
-                        from='discovery.clayster.com'
+                        from='discovery.clayster.com',
                         to='discovery.clayster.com'
                         id='#{ stanza.attrs.id }'/>"
 
                     connection.emit 'stanza', ltx.parse(response)
                 else
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.id, '11'
                     test.equal stanza.attrs.type, 'error'
                     test.expect 15
@@ -2297,7 +2298,7 @@ exports.ProcessorTest =
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.type, 'probe'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
 
                 response = "<presence
                     from='thing@clayster.com/imc'
@@ -2326,7 +2327,7 @@ exports.ProcessorTest =
                 test.equal true, false, 'should not update'
                 test.done()
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
     'test 3.17 - example 46 / 50 / 52 / 53 - disowning thing fails because of backend': (test) ->
@@ -2341,21 +2342,21 @@ exports.ProcessorTest =
         connection.send = (stanza) ->
             if stanza.name is 'iq'
                 if stanza.attrs.to is 'thing@clayster.com/imc'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.type, 'set'
                     test.equal stanza.children.length, 1
                     test.equal stanza.children[0].name, 'disowned'
                     test.equal stanza.children[0].attrs.xmlns, 'urn:xmpp:iot:discovery'
 
                     response = "<iq type='result'
-                        from='discovery.clayster.com'
+                        from='discovery.clayster.com',
                         to='discovery.clayster.com'
                         id='#{ stanza.attrs.id }'/>"
 
                     connection.emit 'stanza', ltx.parse(response)
                 else
                     test.equal stanza.attrs.to, 'owner@clayster.com/phone'
-                    test.equal stanza.attrs.from, 'class-under-test'
+                    test.equal stanza.attrs.from, 'discovery.clayster.com'
                     test.equal stanza.attrs.id, '11'
                     test.equal stanza.attrs.type, 'error'
                     test.expect 16
@@ -2364,7 +2365,7 @@ exports.ProcessorTest =
                 test.equal stanza.name, 'presence'
                 test.equal stanza.attrs.type, 'probe'
                 test.equal stanza.attrs.to, 'thing@clayster.com'
-                test.equal stanza.attrs.from, 'class-under-test'
+                test.equal stanza.attrs.from, 'discovery.clayster.com'
 
                 response = "<presence
                     from='thing@clayster.com/imc'
@@ -2395,7 +2396,7 @@ exports.ProcessorTest =
                 return Q.fcall ->
                     throw new Error()
 
-        processor = new Processor connection, backend
+        processor = new Processor connection, 'discovery.clayster.com', backend
         connection.emit 'stanza', ltx.parse(message)
 
 # more test cases:
