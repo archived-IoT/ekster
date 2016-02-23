@@ -72,7 +72,6 @@ serverDomain = undefined
 
 component.on 'online', () ->
     log.info 'IoT Registry component came online.'
-    component.send '<presence/>'
 
     # Keep the connection going by sending a keep alive
     component.connection.socket.setTimeout(0)
@@ -106,7 +105,7 @@ else
 
 log.info 'Starting the event processor'
 
-processor = new Processor component, jid, backend, bunyan.createLogger(
+processor = new Processor component, program.jid, backend, bunyan.createLogger(
     name: 'processor'
     level: level
 )

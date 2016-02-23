@@ -27,7 +27,7 @@
     "grunt-contrib-nodeunit": "^0.4.1",
     "grunt-contrib-watch": "~0.4.0",
     "skynet": "^1.8.1",
-    "mockgoose": "git@github.com:morficus/Mockgoose.git#bb6bd61609871a61e760c1fdc871d7ed7d89b6a9"
+    "mockgoose": "https://github.com/morficus/Mockgoose.git#bb6bd61609871a61e760c1fdc871d7ed7d89b6a9"
   },
   "engines": {
     "node": "~0.12.1"
